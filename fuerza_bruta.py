@@ -37,14 +37,23 @@ for clause_str in input_str.split(", "):
     if clause_str == '{}':
         continue  # Ignorar cláusulas vacías
     clause = [literal.strip() for literal in clause_str.strip("{}").split(",")]
+
+    for i in range(len(clause)):
+        clause[i] = clause[i].strip("{")
+        clause[i] = clause[i].strip("}")
+
     if any(clause):
+        print(f"clause: {clause}")
         clauses.append(clause)
 
+print(f"Cláusulas: {clauses}")
 # Identificar todas las variables presentes en las cláusulas
 variables = set()
 for clause in clauses:
     for literal in clause:
         variable = literal.lstrip('-')
+        variable = variable.strip('{')
+        variable = variable.strip('}')
         variables.add(variable)
 
 num_variables = len(variables)

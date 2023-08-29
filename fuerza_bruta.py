@@ -29,9 +29,10 @@ def brute_force_satisfiability(clauses, num_variables):
 
 
 if __name__ == '__main__':
+    print("Algoritmo de fuerza bruta para satisfacibilidad de fórmulas proposicionales")
     while True:
         # Pedir al usuario que ingrese las cláusulas
-        input_str = input("Ingrese las cláusulas en el formato {{p}, {-q, -r}, ...}: ")
+        input_str = input("\nIngrese las cláusulas en el formato {{p}, {-q, -r}, ...}: ")
         clauses = []
 
         # {{p, -q}} => [['p', '-q']]

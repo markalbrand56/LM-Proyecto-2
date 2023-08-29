@@ -35,24 +35,23 @@ if __name__ == '__main__':
 
         # {{p, -q}} => [['p', '-q']]
         # {{p}, -{q}} => [['p'], ['-q']]
-        for clause in input_str.split('},'):
-            clause = clause.replace('{', '').replace('}', '').replace(' ', '')
-            if clause.startswith('-'):
-                clause = [clause]
-            else:
-                clause = clause.split(',')
-            clauses.append(clause)
+        # {{-r}, {-q, -r}, {-p, q, -r}, {q}} => [['-r'], ['-q', '-r'], ['-p', 'q', '-r'], ['q']]
+        for clause in input_str.split('}, {'):
+            clause = clause.replace('{', '').replace('}', '')  # Eliminar llaves
+            clause = clause.split(',')  # Separar literales
+            clause = [literal.strip() for literal in clause]  # Eliminar espacios en blanco
+            clauses.append(clause)  # Agregar cláusula a la lista
 
-        print(f"Clausulas: {clauses}")
+        print(f"\tClausulas: {clauses}")
 
         # Identificar todas las variables presentes en las cláusulas
         variables = set()
         for clause in clauses:
             for literal in clause:
-                variable = literal.lstrip('-')
+                variable = literal.lstrip('-')  # Eliminar negación
                 variables.add(variable)
 
-        print(f"Variables: {variables}")
+        print(f"\tVariables: {variables}")
         num_variables = len(variables)
         is_satisfiable, assignment = brute_force_satisfiability(clauses, num_variables)
 

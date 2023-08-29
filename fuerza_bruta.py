@@ -1,18 +1,21 @@
 def evaluate_clause(clause, assignment):
     is_clause_satisfiable = False
     for literal in clause:
-        variable = literal[0]
+        variable = literal.lstrip('-')
+        # print(f"variable: {variable} literal {literal}")
         negation = literal.startswith('-')
         if variable in assignment and assignment[variable] == (not negation):
             is_clause_satisfiable = True
             break
     return is_clause_satisfiable
 
+
 def evaluate_formula(formula, assignment):
     for clause in formula:
         if not evaluate_clause(clause, assignment):
             return False  # Unsatisfiable
     return True  # Satisfiable
+
 
 def brute_force_satisfiability(clauses, num_variables):
     variable_names = list(set(variable for clause in clauses for literal in clause for variable in literal.lstrip('-')))
@@ -23,27 +26,38 @@ def brute_force_satisfiability(clauses, num_variables):
             return True, assignment
     return False, {}
 
-# Pedir al usuario que ingrese las cláusulas
-input_str = input("Ingrese las cláusulas en el formato {{p}, {-q, -r}, ...}: ")
-clauses = []
-for clause_str in input_str.split(", "):
-    if clause_str == '{}':
-        continue  # Ignorar cláusulas vacías
-    clause = [literal.strip() for literal in clause_str.strip("{}").split(",")]
-    if any(clause):
-        clauses.append(clause)
 
-# Identificar todas las variables presentes en las cláusulas
-variables = set()
-for clause in clauses:
-    for literal in clause:
-        variable = literal.lstrip('-')
-        variables.add(variable)
+if __name__ == '__main__':
+    while True:
+        # Pedir al usuario que ingrese las cláusulas
+        input_str = input("Ingrese las cláusulas en el formato {{p}, {-q, -r}, ...}: ")
+        clauses = []
 
-num_variables = len(variables)
-is_satisfiable, assignment = brute_force_satisfiability(clauses, num_variables)
+        # {{p, -q}} => [['p', '-q']]
+        # {{p}, -{q}} => [['p'], ['-q']]
+        for clause in input_str.split('},'):
+            clause = clause.replace('{', '').replace('}', '').replace(' ', '')
+            if clause.startswith('-'):
+                clause = [clause]
+            else:
+                clause = clause.split(',')
+            clauses.append(clause)
 
-if is_satisfiable:
-    print("La fórmula es satisfacible con la asignación:", assignment)
-else:
-    print("La fórmula no es satisfacible.")
+        print(f"Clausulas: {clauses}")
+
+        # Identificar todas las variables presentes en las cláusulas
+        variables = set()
+        for clause in clauses:
+            for literal in clause:
+                variable = literal.lstrip('-')
+                variables.add(variable)
+
+        print(f"Variables: {variables}")
+        num_variables = len(variables)
+        is_satisfiable, assignment = brute_force_satisfiability(clauses, num_variables)
+
+        if is_satisfiable:
+            print("La fórmula es satisfacible con la asignación:", assignment)
+        else:
+            print("La fórmula no es satisfacible.")
+

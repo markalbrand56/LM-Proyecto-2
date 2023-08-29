@@ -3,8 +3,9 @@ def evaluate_clause(clause, assignment):
     for literal in clause:
         variable = literal.lstrip('-')
         # print(f"variable: {variable} literal {literal}")
-        negation = literal.startswith('-')
+        negation = literal.startswith('-')  # True si el literal es negado
         if variable in assignment and assignment[variable] == (not negation):
+            # Si la variable está asignada y el valor es el mismo que el del literal
             is_clause_satisfiable = True
             break
     return is_clause_satisfiable
@@ -20,7 +21,7 @@ def evaluate_formula(formula, assignment):
 def brute_force_satisfiability(clauses, num_variables):
     variable_names = list(set(variable for clause in clauses for literal in clause for variable in literal.lstrip('-')))
     for i in range(2 ** num_variables):
-        assignment = {variable: bool((i >> j) & 1) for j, variable in enumerate(variable_names)}
+        assignment = {variable: bool((i >> j) & 1) for j, variable in enumerate(variable_names)}  # Generar asignación
         is_satisfiable = evaluate_formula(clauses, assignment)
         if is_satisfiable:
             return True, assignment

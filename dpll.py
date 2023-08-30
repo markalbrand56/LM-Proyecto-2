@@ -5,26 +5,42 @@ def __select_literal(cnf):
 
 
 def dpll(cnf, assignments={}):
+    ## Si B es vacía, entonces regresar True e I
     if len(cnf) == 0:
         return True, assignments
 
+    ## Si alguna cláusula/disyunción es vacía, entonces regresar False
     if any([len(c) == 0 for c in cnf]):
         return False, None
 
+    ## Poner en forma positiva
     l = __select_literal(cnf)
 
+
+    ## Eliminar todas las clausulas que contengan l en B.
+    ## Eliminar las ocurrencias en la clausula complementaria de L en B.
+    ## Así, construir B'.
     new_cnf = [c for c in cnf if (l, True) not in c]
     new_cnf = [c.difference({(l, False)}) for c in new_cnf]
+    ## I' = I U DPLL(B', I')
     sat, vals = dpll(new_cnf, {**assignments, **{l: True}})
+
+    ## Si el resultado de I es verdadero, entonces regresar True e I.
     if sat:
         return sat, vals
 
+    ## Eliminar todas las clausulas que contengan -l en B.
+    ## Eliminar las ocurrencias en la clausula complementaria de -L en B.
+    ## Así, construir B''.
     new_cnf = [c for c in cnf if (l, False) not in c]
     new_cnf = [c.difference({(l, True)}) for c in new_cnf]
+    ## I'' = I U DPLL(B'', I'')
     sat, vals = dpll(new_cnf, {**assignments, **{l: False}})
+    ## Si el resultado de I es verdadero, entonces regresar True e I.
     if sat:
         return sat, vals
 
+    ## Si no, regresar False
     return False, None
 
 
